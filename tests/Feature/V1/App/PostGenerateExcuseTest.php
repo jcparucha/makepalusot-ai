@@ -70,6 +70,7 @@ test('returns 200 OK when valid request and successful response', function () {
     $response = postJson('/api/v1/generate', [
         'excuse' => 'I want to exercise, but I am too lazy to do it.',
         'tone' => 'casual',
+        'language' => 'english',
     ]);
 
     $response->assertOk();
@@ -83,6 +84,7 @@ test('returns 429 Too Many Request when spammed generate endpoint', function () 
     $payload = [
         'excuse' => 'I want to exercise, but I am too lazy to do it.',
         'tone' => 'casual',
+        'language' => 'english',
     ];
 
     for ($i = 0; $i < $maxRequest; $i++) {
@@ -94,13 +96,14 @@ test('returns 429 Too Many Request when spammed generate endpoint', function () 
     $response = postJson($url, $payload);
     $response->assertTooManyRequests();
 
-    $response->assertJsonStructure(['message', 'version']);
+    $response->assertJson(['message' => 'Too Many Attempts.']);
 });
 
 test('returns 503 Service Unavailable when AI service is unavailble', function () {
     $response = postJson('/api/v1/generate', [
         'excuse' => 'I want to exercise, but I am too lazy to do it.',
         'tone' => 'casual',
+        'language' => 'english',
     ]);
 
     $response->assertServiceUnavailable();
