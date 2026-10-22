@@ -5,7 +5,7 @@ use function Pest\Laravel\postJson;
 test('returns 422 validation error when payload is required', function () {
     // empty payload
     $response1 = postJson('/api/v1/generate', []);
-    $response2 = postJson('/api/v1/generate', ['excuse' => '', 'tone' => '']);
+    $response2 = postJson('/api/v1/generate', ['excuse' => '', 'tone' => '', 'language' => '']);
 
     $response1->assertUnprocessable();
     $response2->assertUnprocessable();
@@ -15,10 +15,13 @@ test('returns 422 validation error when payload is required', function () {
 });
 
 test('returns 422 validation error when "excuse" payload has incorrect min and max value', function () {
+    $url = '/api/v1/generate';
+    $payload = ['excuse' => 'I am not.', 'tone' => 'formal', 'language' => 'english'];
+
     // should be at least 10 characters
-    $response1 = postJson('/api/v1/generate', ['excuse' => 'I am not.', 'tone' => 'formal']);
+    $response1 = postJson($url, $payload);
     // should be maximum of 250 characters
-    $response2 = postJson('/api/v1/generate', ['excuse' => fake()->realTextBetween(255, 300), 'tone' => 'formal']);
+    $response2 = postJson($url, [...$payload, 'excuse' => fake()->realTextBetween(255, 300)]);
 
     $response1->assertUnprocessable();
     $response2->assertUnprocessable();
@@ -29,8 +32,9 @@ test('returns 422 validation error when "excuse" payload has incorrect min and m
 
 test('returns 422 validation error when "excuse" payload has invalid special characters', function () {
     $response = postJson('/api/v1/generate', [
-        'excuse' => "Am I in the wrong if I only want to add ^.^, but this is the only acceptable characters '.,-'()[]/'?",
+        'excuse' => "Am I in the wrong if I want to add ^.^, but this is the only acceptable characters '.,-'()[]/'?",
         'tone' => 'formal',
+        'language' => 'english',
     ]);
 
     $response->assertUnprocessable();
@@ -42,11 +46,24 @@ test('returns 422 validation error when "tone" payload has invalid value', funct
     $response = postJson('/api/v1/generate', [
         'excuse' => 'I want to exercise, but I am too lazy to do it.',
         'tone' => 'lovely',
+        'language' => 'english',
     ]);
 
     $response->assertUnprocessable();
 
     $response->assertJsonValidationErrorFor('tone', 'errors');
+});
+
+test('returns 422 validation error when "language" payload has invalid value', function () {
+    $response = postJson('/api/v1/generate', [
+        'excuse' => 'I want to exercise, but I am too lazy to do it.',
+        'tone' => 'formal',
+        'language' => 'japanese',
+    ]);
+
+    $response->assertUnprocessable();
+
+    $response->assertJsonValidationErrorFor('language', 'errors');
 });
 
 test('returns 200 OK when valid request and successful response', function () {

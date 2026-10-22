@@ -40,6 +40,7 @@ class AppRequest extends FormRequest
         return [
             'excuse' => ['required', 'min:10', 'max:250', new TextRule],
             'tone' => ['required', Rule::in(['formal', 'friendly', 'casual'])],
+            'language' => ['required', Rule::in(['english', 'taglish', 'tagalog'])],
         ];
     }
 }
