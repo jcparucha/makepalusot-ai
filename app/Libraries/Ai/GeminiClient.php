@@ -49,12 +49,8 @@ class GeminiClient
                         ],
                     ]);
 
-                // dd($response->serverError());
-
                 // catch >= 400 error, log message, and continue to the next model
                 if ($response->failed()) {
-                    // dd($response['error']['code'], $response->serverError(), $response->failed());
-                    // dd($response['error']['code']);
                     $httpCode = $response['error']['code'] ?? 'N/A';
                     $errorMessage = $response['error']['message'] ?? 'It seems that something went wrong.';
                     $context = $response->json() ?? [
