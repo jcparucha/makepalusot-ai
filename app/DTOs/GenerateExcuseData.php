@@ -12,4 +12,13 @@ final class GenerateExcuseData
         public readonly string $tone,
         public readonly string $language,
     ) {}
+
+    public function all(): array
+    {
+        return [
+            'excuse' => $this->excuse,
+            'tone' => $this->tone,
+            'language' => $this->language,
+        ];
+    }
 }
