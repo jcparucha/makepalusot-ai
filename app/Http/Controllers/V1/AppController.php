@@ -11,14 +11,6 @@ class AppController extends Controller
 {
     public function generate(AppRequest $request, GenerateExcuseService $generateExcuse)
     {
-        // TODO call AppService::generate
-        // create AILibrary
-        // create Gemini Util
-        $data = new GenerateExcuseData(...$request->all());
-
-        return response()->json([
-            'message' => $generateExcuse($data),
-            'version' => config('version.number'),
-        ]);
+        return response()->json($generateExcuse(new GenerateExcuseData(...$request->all())));
     }
 }

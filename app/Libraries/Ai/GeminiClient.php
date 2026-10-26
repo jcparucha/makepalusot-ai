@@ -2,12 +2,13 @@
 
 namespace App\Libraries\Ai;
 
+use App\Contracts\Libraries\AiClientInterface;
 use App\DTOs\GenerateExcuseData;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class GeminiClient
+class GeminiClient implements AiClientInterface
 {
     public function generateContent(GenerateExcuseData $data): array
     {
@@ -56,6 +57,7 @@ class GeminiClient
                     $context = $response->json() ?? [
                         'url' => $url,
                         'payload' => $data->all(),
+                        'gemini_status_code' => $response->status(),
                     ];
 
                     $finalMessage = "FAILED model:{$model}: "."HTTP CODE ($httpCode) - ".$errorMessage;
