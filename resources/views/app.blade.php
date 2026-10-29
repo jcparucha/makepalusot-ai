@@ -10,7 +10,7 @@
 
     @vite(['resources/js/app.ts', 'resources/css/app.css'])
 </head>
-<body>
-    <div id="app"></div>
+<body class="dark:bg-slate-950 dark:text-white">
+    <div id="app" class="h-full"></div>
 </body>
 </html>

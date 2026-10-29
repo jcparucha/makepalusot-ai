@@ -7,20 +7,61 @@
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-prim-1: #6bebaf;
+    --color-prim-2: #217394;
+    --color-prim-2-70: #217394d2;
+    --color-sec-1: #a973cc;
+    --color-sec-2: #551f63;
+}
+@layer base {
+    html,
+    body {
+        height: 100%;
+    }
+
+    h1 {
+        font-size: var(--text-2xl);
+    }
+    h2 {
+        font-size: var(--text-xl);
+    }
+    p {
+        font-size: var(--text-lg);
+        color: var(--color-slate-300);
+    }
 }
 
-.btn {
-    padding: 4px 8px;
-    border-radius: 8px;
-}
+@layer components {
+    .app-name {
+        background: linear-gradient(45deg, var(--color-prim-1), var(--color-sec-1));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
 
-.btn.primary:hover {
-    background-color: #366feb;
-    box-shadow: 0px 2px 8px 2px #00237071;
-}
+    .btn {
+        padding: 4px 8px;
+        border-radius: 8px;
+        color: var(--color-slate-200);
+    }
 
-.btn.primary {
-    color: white;
-    border: 1px solid #0036aa;
-    background-color: #1e60ec;
+    .btn.primary {
+        background: linear-gradient(45deg, var(--color-prim-2), var(--color-sec-2));
+    }
+
+    .btn.primary:hover {
+        background: linear-gradient(45deg, var(--color-prim-2-70), var(--color-sec-2));
+        box-shadow: 0px 2px 8px 2px #145670a4;
+        color: var(--color-slate-300);
+    }
+
+    .btn.secondary {
+        border: 2px solid var(--color-prim-2);
+    }
+
+    .btn.secondary:hover {
+        background: var(--color-slate-900);
+        box-shadow: 0px 2px 8px 2px #145670a4;
+        color: var(--color-slate-300);
+    }
 }
