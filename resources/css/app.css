@@ -9,7 +9,7 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
     --color-prim-1: #6bebaf;
     --color-prim-2: #217394;
-    --color-prim-2-70: #217394d2;
+    --color-prim-2-lighter: #3585a5;
     --color-sec-1: #a973cc;
     --color-sec-2: #551f63;
 }
@@ -50,9 +50,10 @@
     }
 
     .btn.primary:hover {
-        background: linear-gradient(45deg, var(--color-prim-2-70), var(--color-sec-2));
-        box-shadow: 0px 2px 8px 2px #145670a4;
-        color: var(--color-slate-300);
+        background: linear-gradient(45deg, var(--color-prim-2-lighter), var(--color-sec-2));
+        box-shadow: 0px 2px 8px 2px #1e7ca1a4;
+        color: var(--color-slate-100);
+        font-weight: 500;
     }
 
     .btn.secondary {
