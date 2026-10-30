@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppName from './components/AppName.vue';
-import Button from './components/ui/Button.vue';
+import Button from './components/Button.vue';
+import FormResult from './components/ui/FormResult.vue';
 import Header from './components/ui/Header.vue';
 </script>
 
@@ -15,31 +16,6 @@ import Header from './components/ui/Header.vue';
             </p>
             <Button class="rounded-full px-4 mt-2" variant="secondary"> Sample Text</Button>
         </section>
-        <section class="w-full flex flex-col space-y-4">
-            <!-- Form and Text Area with Dropdown -->
-            <form class="border flex flex-col space-y-4 p-4">
-                <textarea class="border w-full" placeholder="I don't want to go to work. I'm too lazy for that." />
-                <div class="flex space-x-2">
-                    <select>
-                        <option value="">Select Tone</option>
-                        <option value="formal">Formal</option>
-                        <option value="friendly">Friendly</option>
-                        <option value="casual">Casual</option>
-                    </select>
-                    <select>
-                        <option value="">Select Language</option>
-                        <option value="english">English</option>
-                        <option value="taglish">Taglish</option>
-                        <option value="tagalog">Tagalog</option>
-                    </select>
-                </div>
-                <button class="btn primary" type="submit">Generate</button>
-            </form>
-
-            <div class="border p-4">
-                <h2 class="font-bold">Generated Result:</h2>
-                <p>This is the result</p>
-            </div>
-        </section>
+        <FormResult />
     </main>
 </template>
