@@ -5,7 +5,7 @@ import Header from './components/ui/Header.vue';
 
 <template>
     <Header />
-    <main class="grid grid-cols-2 gap-4 p-8">
+    <main class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-8">
         <section class="space-y-2 items-center">
             <AppName class="text-5xl" />
             <p class="text-2xl">A <i class="underline">witty</i> AI-powered Excuse Generator.</p>
