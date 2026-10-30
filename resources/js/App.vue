@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AppName from './components/AppName.vue';
+import Button from './components/ui/Button.vue';
 import Header from './components/ui/Header.vue';
 </script>
 
@@ -12,7 +13,7 @@ import Header from './components/ui/Header.vue';
             <p class="text-slate-400 text-sm">
                 <i>Para kahit anong excuses mo, sa work, school, or kahit sa bahay, makakalusot yan 🤞 </i>
             </p>
-            <button class="btn secondary rounded-full px-4 mt-2">Sample Text</button>
+            <Button class="rounded-full px-4 mt-2" variant="secondary"> Sample Text</Button>
         </section>
         <section class="w-full flex flex-col space-y-4">
             <!-- Form and Text Area with Dropdown -->
