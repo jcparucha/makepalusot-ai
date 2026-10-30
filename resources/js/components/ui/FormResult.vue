@@ -38,7 +38,7 @@ function handleOnClick() {
 
 <template>
     <section class="w-full flex flex-col space-y-4">
-        <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick"> Sample Excuse</Button>
+        <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick">Try Sample Excuse</Button>
         <Form @submit="handleOnSubmit">
             <TextArea
                 v-model="form.excuse"
