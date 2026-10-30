@@ -4,15 +4,17 @@ type OptionsValue = {
     value: string | null;
 };
 
-type DropdownProps = {
+const props = defineProps<{
     options?: OptionsValue[];
-};
+}>();
 
-const props: DropdownProps = defineProps(['options']);
+const model = defineModel<string | null>();
 </script>
 
 <template>
-    <select>
-        <option v-for="(option, index) in options" :key="index" :value="option.value">{{ option.name }}</option>
+    <select v-model="model">
+        <option v-for="(option, index) in props.options" :key="index" :value="option.value">
+            {{ option.name }}
+        </option>
     </select>
 </template>

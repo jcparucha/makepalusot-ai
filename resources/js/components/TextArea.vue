@@ -4,9 +4,11 @@ type TextAreaProps = {
     placeholder?: string;
 };
 
-const props: TextAreaProps = defineProps(['class', 'placeholder']);
+const props = defineProps<TextAreaProps>();
+
+const model = defineModel<string>();
 </script>
 
 <template>
-    <textarea :class="class" :placeholder="placeholder" />
+    <textarea :class="class" :placeholder="placeholder" v-model="model" />
 </template>

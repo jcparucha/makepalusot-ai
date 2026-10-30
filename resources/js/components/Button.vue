@@ -5,14 +5,17 @@ type ButtonProps = {
     type?: 'button' | 'submit';
 };
 
-const props: ButtonProps = defineProps(['variant', 'class', 'type']);
+const props = defineProps<ButtonProps>();
+const emit = defineEmits<{
+    (e: 'click', event: MouseEvent): void;
+}>();
 
 const type = props?.type ?? 'button';
 const style = props.variant === 'secondary' ? 'secondary' : 'primary';
 </script>
 
 <template>
-    <button class="btn" :class="[style, props.class ?? '']" :type="type">
+    <button class="btn" :class="[style, props.class ?? '']" :type="type" @click="emit('click', $event)">
         <slot />
     </button>
 </template>
