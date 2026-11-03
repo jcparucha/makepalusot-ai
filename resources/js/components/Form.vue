@@ -5,7 +5,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-    <form @submit.prevent="emit('submit', $event)" class="border flex flex-col space-y-4 p-4">
+    <form @submit.prevent="emit('submit', $event)" class="box-container flex flex-col space-y-4 p-8">
         <slot />
     </form>
 </template>

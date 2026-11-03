@@ -29,6 +29,10 @@
         font-size: var(--text-lg);
         color: var(--color-slate-300);
     }
+    textarea,
+    input {
+        @apply w-full rounded-md border border-slate-800;
+    }
 }
 
 @layer components {
@@ -37,6 +41,15 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+
+    .box-container {
+        @apply border
+        rounded-md
+        border-slate-800
+        shadow-md
+        shadow-slate-800
+        lg:w-full;
     }
 
     .btn {
