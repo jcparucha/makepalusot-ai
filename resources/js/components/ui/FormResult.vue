@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 import Button from '../Button.vue';
 import Form from '../Form.vue';
 import Select from '../Select.vue';
@@ -19,6 +19,8 @@ const langOptions = [
     { name: 'Tagalog', value: 'tagalog' }
 ];
 
+const generatedResult = ref('');
+
 const form = reactive({
     excuse: '',
     tone: '',
@@ -26,7 +28,18 @@ const form = reactive({
 });
 
 function handleOnSubmit() {
+    // TODO add fetch request
     console.log(form);
+
+    const response = {
+        data: {
+            model: 'test-model-alpha',
+            result: 'This is the generated result.',
+            errors: []
+        }
+    };
+
+    generatedResult.value = response.data.result;
 }
 
 function handleOnClick() {
@@ -34,12 +47,15 @@ function handleOnClick() {
     form.tone = 'formal';
     form.language = 'english';
 }
+
+console.log(form);
 </script>
 
 <template>
     <section class="w-full flex flex-col space-y-4">
         <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick">Try Sample Excuse</Button>
         <Form @submit="handleOnSubmit">
+            <!-- TODO beautify input fields -->
             <TextArea
                 v-model="form.excuse"
                 class="border w-full"
@@ -52,7 +68,10 @@ function handleOnClick() {
 
         <div class="border p-4">
             <h2 class="font-bold">Generated Result:</h2>
-            <p>This is the result</p>
+            <p>
+                <span v-if="generatedResult">{{ generatedResult }}</span>
+                <span v-else class="text-slate-500">No generated result yet</span>
+            </p>
         </div>
     </section>
 </template>
