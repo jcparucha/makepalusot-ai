@@ -34,7 +34,7 @@ class GeminiClient implements AiClientInterface
                     ->post($updatedUrl, [
                         'system_instruction' => [
                             'parts' => [
-                                'text' => implode([
+                                'text' => implode(' ', [
                                     'You are an Excuse generator.',
                                     'You will generate an excuse based on',
                                     "{$data->tone} setting",
