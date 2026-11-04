@@ -89,7 +89,7 @@ onUnmounted(() => clearInterval(intervalId));
                 {{ errorMessage }}
             </p>
 
-            <TextArea v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors" />
+            <TextArea name="excuse" v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors ?? undefined" />
 
             <div class="flex justify-between space-x-4">
                 <Select v-model="form.tone" :options="toneOptions" :errors="errors" />

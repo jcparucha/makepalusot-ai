@@ -21,7 +21,7 @@ export function useFetch<T>(url: string, formValue: T, callback?: Function) {
 
             if (!response.ok) {
                 if (response.status === 422) {
-                    const errors = await response.json();
+                    errors.value = await response.json();
                     console.log(errors);
                 } else if (response.status === 429) {
                     throw new Error(response.statusText);
