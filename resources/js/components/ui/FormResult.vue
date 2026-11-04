@@ -89,11 +89,11 @@ onUnmounted(() => clearInterval(intervalId));
                 {{ errorMessage }}
             </p>
 
-            <TextArea name="excuse" v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors ?? undefined" />
+            <TextArea name="excuse" v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors" />
 
             <div class="flex justify-between space-x-4">
-                <Select v-model="form.tone" :options="toneOptions" :errors="errors" />
-                <Select v-model="form.language" :options="langOptions" :errors="errors" />
+                <Select name="tone" v-model="form.tone" :options="toneOptions" :errors="errors" />
+                <Select name="language" v-model="form.language" :options="langOptions" :errors="errors" />
             </div>
 
             <Button type="submit" :disabled="isLoading || cooldown > 0">

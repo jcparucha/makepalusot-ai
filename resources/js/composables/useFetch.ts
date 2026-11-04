@@ -2,12 +2,12 @@ import { ref, toValue } from 'vue';
 
 export function useFetch<T>(url: string, formValue: T, callback?: Function) {
     const data = ref<data | null>(null);
-    const errors = ref<errors | null>(null);
+    const errors = ref<errors | undefined>(undefined);
     const isLoading = ref(false);
 
     const execute = async () => {
         isLoading.value = true;
-        errors.value = null;
+        errors.value = undefined;
 
         try {
             const response = await fetch(url, {
@@ -22,7 +22,6 @@ export function useFetch<T>(url: string, formValue: T, callback?: Function) {
             if (!response.ok) {
                 if (response.status === 422) {
                     errors.value = await response.json();
-                    console.log(errors);
                 } else if (response.status === 429) {
                     throw new Error(response.statusText);
                 } else {
