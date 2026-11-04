@@ -32,6 +32,7 @@ const form = reactive({
 const cooldown = ref(0);
 const generatedResult = ref('');
 const validationErrors = ref<errors | null>(null);
+const copyMessage = ref('');
 
 let intervalId: number | undefined;
 
@@ -61,6 +62,9 @@ const errorMessage = computed(() => {
 async function handleOnSubmit() {
     if (isLoading.value || cooldown.value > 0) return;
 
+    // set to hide Copy Message notif
+    if (copyMessage.value) copyMessage.value = '';
+
     const fieldErrors = validateForm(form);
 
     if (fieldErrors) {
@@ -81,8 +85,13 @@ function handleOnClick() {
     form.language = 'english';
 }
 
-function handleOnClickCopy() {
-    console.log('Copied');
+async function handleOnClickCopy() {
+    try {
+        await navigator.clipboard.writeText(generatedResult.value);
+        copyMessage.value = 'Copied to clipboard.';
+    } catch {
+        copyMessage.value = 'Unable to copy the excuse. Please check clipboard permissions and try again.';
+    }
 }
 
 onUnmounted(() => clearInterval(intervalId));
@@ -93,7 +102,7 @@ onUnmounted(() => clearInterval(intervalId));
         <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick"> Try Sample Excuse </Button>
 
         <Form @submit="handleOnSubmit">
-            <p class="p-4 box-error" v-if="errorMessage">
+            <p class="box-error" v-if="errorMessage">
                 {{ errorMessage }}
             </p>
 
@@ -119,6 +128,7 @@ onUnmounted(() => clearInterval(intervalId));
             <Button v-if="generatedResult" class="px-4 w-full" variant="secondary" @click="handleOnClickCopy">
                 Copy Excuse
             </Button>
+            <p v-if="copyMessage" class="box-success">{{ copyMessage }}</p>
         </div>
     </section>
 </template>
