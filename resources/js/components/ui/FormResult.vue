@@ -53,7 +53,7 @@ function startCooldown(seconds: number = 5) {
 const { data, errors, isLoading, execute } = useFetch<formData>('/api/v1/generate', form, startCooldown);
 
 const errorMessage = computed(() => {
-    const systemErrors = errors.value?.errors.system ?? [];
+    const systemErrors = errors.value?.errors.system;
     if (systemErrors?.length) {
         return systemErrors.join(' ');
     }

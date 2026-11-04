@@ -1,20 +1,5 @@
 import { ref, toValue } from 'vue';
 
-type error = Record<string, string[]>;
-type errors = {
-    errors: error;
-    message?: string;
-    version?: string;
-};
-type data = {
-    data: {
-        result: string;
-        model: string;
-        errors: error;
-    };
-    version: string;
-};
-
 export function useFetch<T>(url: string, formValue: T, callback?: Function) {
     const data = ref<data | null>(null);
     const errors = ref<errors | null>(null);
