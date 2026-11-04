@@ -1,17 +1,11 @@
 <script setup lang="ts">
 import { useFetch } from '@/composables/useFetch.js';
+import { validateForm, type FormValues } from '@/schema/form.js';
 import { computed, onUnmounted, reactive, ref } from 'vue';
-import { z } from 'zod';
 import Button from '../Button.vue';
 import Form from '../Form.vue';
 import Select from '../Select.vue';
 import TextArea from '../TextArea.vue';
-
-type formData = {
-    excuse: string;
-    tone: string;
-    language: string;
-};
 
 const toneOptions = [
     { name: 'Select Tone', value: '' },
@@ -29,12 +23,6 @@ const langOptions = [
 
 const exampleExcuse = "I don't want to go to work. I'm too lazy for that.";
 
-const formSchema = z.object({
-    excuse: z.string().trim().min(1, 'The excuse field is required.'),
-    tone: z.string().trim().min(1, 'The language field is required.'),
-    language: z.string().trim().min(1, 'The tone field is required.')
-});
-
 const form = reactive({
     excuse: '',
     tone: '',
@@ -43,6 +31,8 @@ const form = reactive({
 
 const cooldown = ref(0);
 const generatedResult = ref('');
+const validationErrors = ref<errors | null>(null);
+
 let intervalId: number | undefined;
 
 function startCooldown(seconds: number = 5) {
@@ -57,9 +47,8 @@ function startCooldown(seconds: number = 5) {
     }, 1000);
 }
 
-const { data, errors, isLoading, execute } = useFetch<formData>('/api/v1/generate', form, startCooldown);
+const { data, errors, isLoading, execute } = useFetch<FormValues>('/api/v1/generate', form, startCooldown);
 
-const validationErrors = ref<errors | null>(null);
 const formErrors = computed(() => validationErrors.value ?? errors.value ?? undefined);
 
 const errorMessage = computed(() => {
@@ -72,20 +61,9 @@ const errorMessage = computed(() => {
 async function handleOnSubmit() {
     if (isLoading.value || cooldown.value > 0) return;
 
-    const validation = formSchema.safeParse(form);
+    const fieldErrors = validateForm(form);
 
-    if (!validation.success) {
-        const fieldErrors: Record<string, string[]> = {};
-
-        for (const issue of validation.error.issues) {
-            console.log(issue);
-            const field = issue.path[0];
-
-            if (typeof field === 'string') {
-                (fieldErrors[field] ??= []).push(issue.message);
-            }
-        }
-
+    if (fieldErrors) {
         validationErrors.value = { errors: fieldErrors };
         return;
     }
