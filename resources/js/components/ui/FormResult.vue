@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useFetch } from '@/composables/useFetch.js';
 import { onUnmounted, reactive, ref } from 'vue';
 import Button from '../Button.vue';
 import Form from '../Form.vue';
 import Select from '../Select.vue';
 import TextArea from '../TextArea.vue';
+
+type formData = {
+    excuse: string;
+    tone: string;
+    language: string;
+};
 
 const toneOptions = [
     { name: 'Select Tone', value: '' },
@@ -28,8 +35,6 @@ const form = reactive({
 });
 
 const cooldown = ref(0);
-const isLoading = ref(false);
-const errors = ref([]);
 const errorMessage = ref('');
 const generatedResult = ref('');
 let intervalId: number | undefined;
@@ -45,40 +50,14 @@ function startCooldown(seconds: number = 5) {
     }, 1000);
 }
 
+const { data, errors, isLoading, execute } = useFetch<formData>('/api/v1/generate', form, startCooldown);
+
 async function handleOnSubmit() {
     if (isLoading.value || cooldown.value > 0) return;
-    isLoading.value = true;
-    errorMessage.value = '';
 
-    try {
-        const response = await fetch('/api/v1/generate', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(form)
-        });
+    await execute();
 
-        if (!response.ok) {
-            if (response.status === 422) {
-                const errors = await response.json();
-                console.log({ errors });
-            } else if (response.status === 429) {
-                throw new Error(response.statusText);
-            } else {
-                throw new Error('Something went wrong. Try again later.');
-            }
-        }
-
-        const json = await response.json();
-        generatedResult.value = json.data.result;
-    } catch (e) {
-        errorMessage.value = e instanceof Error ? e.message : 'Something went wrong.';
-    } finally {
-        isLoading.value = false;
-        startCooldown();
-    }
+    generatedResult.value = data.value?.data.result ?? '';
 }
 
 function handleOnClick() {
