@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { onUnmounted, reactive, ref } from 'vue';
 import Button from '../Button.vue';
 import Form from '../Form.vue';
 import Select from '../Select.vue';
@@ -21,27 +21,64 @@ const langOptions = [
 
 const exampleExcuse = "I don't want to go to work. I'm too lazy for that.";
 
-const generatedResult = ref('');
-
 const form = reactive({
     excuse: '',
     tone: '',
     language: ''
 });
 
-function handleOnSubmit() {
-    // TODO add fetch request
-    console.log(form);
+const cooldown = ref(0);
+const isLoading = ref(false);
+const errors = ref([]);
+const errorMessage = ref('');
+const generatedResult = ref('');
+let intervalId: number | undefined;
 
-    const response = {
-        data: {
-            model: 'test-model-alpha',
-            result: 'This is the generated result.',
-            errors: []
+function startCooldown(seconds: number = 5) {
+    cooldown.value = seconds;
+
+    intervalId = window.setInterval(() => {
+        cooldown.value -= 1;
+        if (cooldown.value <= 0) {
+            clearInterval(intervalId);
         }
-    };
+    }, 1000);
+}
 
-    generatedResult.value = response.data.result;
+async function handleOnSubmit() {
+    if (isLoading.value || cooldown.value > 0) return;
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    try {
+        const response = await fetch('/api/v1/generate', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(form)
+        });
+
+        if (!response.ok) {
+            if (response.status === 422) {
+                const errors = await response.json();
+                console.log({ errors });
+            } else if (response.status === 429) {
+                throw new Error(response.statusText);
+            } else {
+                throw new Error('Something went wrong. Try again later.');
+            }
+        }
+
+        const json = await response.json();
+        generatedResult.value = json.data.result;
+    } catch (e) {
+        errorMessage.value = e instanceof Error ? e.message : 'Something went wrong.';
+    } finally {
+        isLoading.value = false;
+        startCooldown();
+    }
 }
 
 function handleOnClick() {
@@ -54,7 +91,7 @@ function handleOnClickCopy() {
     console.log('Copied');
 }
 
-console.log(form);
+onUnmounted(() => clearInterval(intervalId));
 </script>
 
 <template>
@@ -62,13 +99,20 @@ console.log(form);
         <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick"> Try Sample Excuse </Button>
 
         <Form @submit="handleOnSubmit">
+            <!-- TODO continue to display error -->
+            <p class="p-4 border rounded-md border-b-red-800 text-red-400 shadow shadow-red-800" v-if="errorMessage">
+                {{ errorMessage }}
+            </p>
             <!-- TODO beautify input fields -->
-            <TextArea v-model="form.excuse" :placeholder="exampleExcuse" />
+            <TextArea v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors" />
             <div class="flex justify-between space-x-4">
-                <Select v-model="form.tone" :options="toneOptions" />
-                <Select v-model="form.language" :options="langOptions" />
+                <Select v-model="form.tone" :options="toneOptions" :errors="errors" />
+                <Select v-model="form.language" :options="langOptions" :errors="errors" />
             </div>
-            <Button type="submit">Generate</Button>
+            <Button type="submit" :disabled="isLoading || cooldown > 0">
+                {{ isLoading ? 'Generating...' : 'Generate' }}
+                <span v-if="cooldown != 0">&nbsp;({{ cooldown }})</span>
+            </Button>
         </Form>
 
         <div class="box-container p-8 space-y-4">

@@ -3,6 +3,7 @@ type ButtonProps = {
     variant?: 'primary' | 'secondary';
     class?: string;
     type?: 'button' | 'submit';
+    disabled?: boolean;
 };
 
 const props = defineProps<ButtonProps>();
@@ -15,7 +16,13 @@ const style = props.variant === 'secondary' ? 'secondary' : 'primary';
 </script>
 
 <template>
-    <button class="btn" :class="[style, props.class ?? '']" :type="type" @click="emit('click', $event)">
+    <button
+        class="btn"
+        :class="[style, props.class ?? '', disabled ? 'disabled' : '']"
+        :type="type"
+        @click="emit('click', $event)"
+        :disabled="disabled"
+    >
         <slot />
     </button>
 </template>
