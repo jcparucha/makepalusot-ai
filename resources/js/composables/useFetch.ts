@@ -1,14 +1,22 @@
 import { ref, toValue } from 'vue';
 
-type data = Record<string, string>;
-type errors = Record<string, data>[] | data;
-type response = {
-    data: data;
+type error = Record<string, string[]>;
+type errors = {
+    errors: error;
+    message?: string;
+    version?: string;
+};
+type data = {
+    data: {
+        result: string;
+        model: string;
+        errors: error;
+    };
     version: string;
 };
 
 export function useFetch<T>(url: string, formValue: T, callback?: Function) {
-    const data = ref<response | null>(null);
+    const data = ref<data | null>(null);
     const errors = ref<errors | null>(null);
     const isLoading = ref(false);
 
@@ -35,11 +43,11 @@ export function useFetch<T>(url: string, formValue: T, callback?: Function) {
                 } else {
                     throw new Error('Something went wrong. Try again later.');
                 }
+            } else {
+                data.value = await response.json();
             }
-
-            data.value = await response.json();
         } catch (e) {
-            errors.value = { system: e instanceof Error ? e.message : 'Something went wrong.' };
+            errors.value = { errors: { system: [e instanceof Error ? e.message : 'Something went wrong.'] } };
         } finally {
             isLoading.value = false;
 

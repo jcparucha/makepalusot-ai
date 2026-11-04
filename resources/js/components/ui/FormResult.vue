@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useFetch } from '@/composables/useFetch.js';
-import { onUnmounted, reactive, ref } from 'vue';
+import { computed, onUnmounted, reactive, ref } from 'vue';
 import Button from '../Button.vue';
 import Form from '../Form.vue';
 import Select from '../Select.vue';
@@ -35,7 +35,6 @@ const form = reactive({
 });
 
 const cooldown = ref(0);
-const errorMessage = ref('');
 const generatedResult = ref('');
 let intervalId: number | undefined;
 
@@ -45,12 +44,20 @@ function startCooldown(seconds: number = 5) {
     intervalId = window.setInterval(() => {
         cooldown.value -= 1;
         if (cooldown.value <= 0) {
+            cooldown.value = 0;
             clearInterval(intervalId);
         }
     }, 1000);
 }
 
 const { data, errors, isLoading, execute } = useFetch<formData>('/api/v1/generate', form, startCooldown);
+
+const errorMessage = computed(() => {
+    const systemErrors = errors.value?.errors.system ?? [];
+    if (systemErrors?.length) {
+        return systemErrors.join(' ');
+    }
+});
 
 async function handleOnSubmit() {
     if (isLoading.value || cooldown.value > 0) return;
@@ -78,16 +85,17 @@ onUnmounted(() => clearInterval(intervalId));
         <Button class="rounded-full px-4 mt-2" variant="secondary" @click="handleOnClick"> Try Sample Excuse </Button>
 
         <Form @submit="handleOnSubmit">
-            <!-- TODO continue to display error -->
-            <p class="p-4 border rounded-md border-b-red-800 text-red-400 shadow shadow-red-800" v-if="errorMessage">
+            <p class="p-4 box-error" v-if="errorMessage">
                 {{ errorMessage }}
             </p>
-            <!-- TODO beautify input fields -->
+
             <TextArea v-model="form.excuse" :placeholder="exampleExcuse" :errors="errors" />
+
             <div class="flex justify-between space-x-4">
                 <Select v-model="form.tone" :options="toneOptions" :errors="errors" />
                 <Select v-model="form.language" :options="langOptions" :errors="errors" />
             </div>
+
             <Button type="submit" :disabled="isLoading || cooldown > 0">
                 {{ isLoading ? 'Generating...' : 'Generate' }}
                 <span v-if="cooldown != 0">&nbsp;({{ cooldown }})</span>
